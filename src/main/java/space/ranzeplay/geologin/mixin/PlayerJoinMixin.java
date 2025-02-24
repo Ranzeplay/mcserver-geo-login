@@ -26,33 +26,40 @@ public class PlayerJoinMixin {
         var ip = ipString.substring(1, ipString.lastIndexOf(":"));
         GeoLogin.LOGGER.info("Player {} connected from {}", player.getName().getString(), ip);
 
-        boolean isAccept = GeoLogin.CONFIG.allowDefault;
+        boolean isAccept;
+        String countryCode = GeoLogin.CACHE.getIfPresent(ip);
+        if(countryCode != null) {
+            GeoLogin.LOGGER.info("Cache hit for IP: {}", ip);
+        }
+        else {
+            try {
+                HttpClient client = HttpClient.newHttpClient();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(new URI("https://api.iplocation.net/?ip=" + ip))
+                        .build();
 
-        // send http GET request to https://api.iplocation.net/?ip={ip} and get json result
-        try {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI("https://api.iplocation.net/?ip=" + ip))
-                    .build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                JsonObject jsonResponse = JsonParser.parseString(response.body()).getAsJsonObject();
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            JsonObject jsonResponse = JsonParser.parseString(response.body()).getAsJsonObject();
+                countryCode = jsonResponse.get("country_code2").getAsString();
+                GeoLogin.CACHE.put(ip, countryCode);
 
-            var countryCode = jsonResponse.get("country_code2").getAsString();
-            if(GeoLogin.CONFIG.useWhitelist){
-                isAccept = GeoLogin.CONFIG.countries.contains(countryCode);
-            }else {
-                isAccept = !GeoLogin.CONFIG.countries.contains(countryCode);
+                // Process the JSON response as needed
+                GeoLogin.LOGGER.debug("IP Location Data: {}", jsonResponse);
+            } catch (Exception e) {
+                GeoLogin.LOGGER.error("Failed to get IP location data", e);
             }
+        }
 
-            // Process the JSON response as needed
-            GeoLogin.LOGGER.debug("IP Location Data: {}", jsonResponse);
-        } catch (Exception e) {
-            GeoLogin.LOGGER.error("Failed to get IP location data", e);
+        if(GeoLogin.CONFIG.useWhitelist){
+            isAccept = GeoLogin.CONFIG.countries.contains(countryCode);
+        }else {
+            isAccept = !GeoLogin.CONFIG.countries.contains(countryCode);
         }
 
         if(!isAccept) {
             connection.disconnect(Text.translatable("multiplayer.disconnect.not_whitelisted"));
+            GeoLogin.LOGGER.info("Player {} from {} was kicked", player.getName().getString(), countryCode);
         }
     }
 }
