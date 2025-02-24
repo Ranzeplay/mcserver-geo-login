@@ -4,25 +4,18 @@
   "version": "${version}",
   "name": "GeoLogin",
   "description": "",
-  "authors": [],
+  "authors": ["Jeb Feng"],
   "contact": {},
   "license": "MIT",
   "icon": "assets/geologin/icon.png",
   "environment": "*",
   "entrypoints": {
-    "client": [
-      "space.ranzeplay.geologin.client.GeologinClient"
-    ],
     "main": [
       "space.ranzeplay.geologin.GeoLogin"
     ]
   },
   "mixins": [
-    "geologin.mixins.json",
-    {
-      "config": "geologin.client.mixins.json",
-      "environment": "client"
-    }
+    "geologin.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",
