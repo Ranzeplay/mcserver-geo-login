@@ -20,7 +20,7 @@ import java.net.http.HttpResponse;
 
 @Mixin(PlayerManager.class)
 public class PlayerJoinMixin {
-    @Inject(at = @At("HEAD"), method = "onPlayerConnect")
+    @Inject(at = @At("TAIL"), method = "onPlayerConnect")
     private void playerConnect(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
         var ipString = connection.getAddressAsString(true);
         var ip = ipString.substring(1, ipString.lastIndexOf(":"));
