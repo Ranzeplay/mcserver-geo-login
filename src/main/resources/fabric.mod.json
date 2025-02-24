@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "geologin",
+  "version": "${version}",
+  "name": "GeoLogin",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/geologin/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "space.ranzeplay.geologin.client.GeologinClient"
+    ],
+    "main": [
+      "space.ranzeplay.geologin.Geologin"
+    ]
+  },
+  "mixins": [
+    "geologin.mixins.json",
+    {
+      "config": "geologin.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
