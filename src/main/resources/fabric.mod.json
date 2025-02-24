@@ -14,7 +14,7 @@
       "space.ranzeplay.geologin.client.GeologinClient"
     ],
     "main": [
-      "space.ranzeplay.geologin.Geologin"
+      "space.ranzeplay.geologin.GeoLogin"
     ]
   },
   "mixins": [
