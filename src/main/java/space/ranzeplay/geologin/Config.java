@@ -16,12 +16,12 @@ public class Config {
     }
 
     public boolean isInWhitelist(String ip) {
-        var addressItems = ip.split('.')
+        var addressItems = ip.split("-");
 
         for(String ipEntry : this.ipWhitelist) {
             // IP is a segment or single
-            if(ipEntry.contains('-')) {
-                var segItems = ipEntry.split('-');
+            if(ipEntry.contains("-")) {
+                var segItems = ipEntry.split("-");
                 var begin = segItems[0];
                 var beginAddrItems = begin.split(".");
                 var end = segItems[1];
@@ -37,7 +37,7 @@ public class Config {
                     }
                 }
             } else {
-                var addr = ipEntry.split('.');
+                var addr = ipEntry.split("-");
 
                 for(int i = 0; i < addressItems.length; i++) {
                     if(addr[i] != "*" && addr[i].equals(addr)) {
