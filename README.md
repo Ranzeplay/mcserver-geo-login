@@ -10,6 +10,9 @@ File path `config/geologin.json`
 - `allowDefault`: Fallback status, set to `false` if you don't want to let players to join when failing to validate their location.
 - `useWhitelist`: Countries in `countries` will be blocked from logging in if set to `false`, only the countries in `countries` are allowed to join if set to `true`.
 - `cacheExpireMinutes`: IP address will be cached to prevent checking for multiple times, set the field to control the recheck time.
+- `ipWhitelist`: IP addresses that bypasses country check directly, formats:
+  - `xxx.xxx.xxx.xxx`: Single IP address, allow `*` for wildcard
+  - `xxx.xxx.xxx.xxx-yyy.yyy.yyy.yyy`: IP address segment
 
 ## Provider
 

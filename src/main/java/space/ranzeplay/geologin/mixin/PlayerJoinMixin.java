@@ -26,6 +26,11 @@ public class PlayerJoinMixin {
         var ip = ipString.substring(1, ipString.lastIndexOf(":"));
         GeoLogin.LOGGER.info("Player {} connected from {}", player.getName().getString(), ip);
 
+        if(GeoLogin.CONFIG.isInWhitelist(ip)) {
+            GeoLogin.LOGGER.info("Address of player {} is in IP whitelist", player.getName().getString());
+            return;
+        }
+
         boolean isAccept;
         String countryCode = GeoLogin.CACHE.getIfPresent(ip);
         if(countryCode != null) {
@@ -59,7 +64,7 @@ public class PlayerJoinMixin {
 
         if(!isAccept) {
             connection.disconnect(Text.translatable("multiplayer.disconnect.not_whitelisted"));
-            GeoLogin.LOGGER.info("Player {} from {} was kicked", player.getName().getString(), countryCode);
+            GeoLogin.LOGGER.info("Player {} from {} was kicked by GeoLogin policy", player.getName().getString(), countryCode);
         }
     }
 }
