@@ -26,17 +26,16 @@ public class PlayerJoinMixin {
         var ip = ipString.substring(1, ipString.lastIndexOf(":"));
         GeoLogin.LOGGER.info("Player {} connected from {}", player.getName().getString(), ip);
 
-        if(GeoLogin.CONFIG.isInWhitelist(ip)) {
+        if (GeoLogin.CONFIG.isInWhitelist(ip)) {
             GeoLogin.LOGGER.info("Address of player {} is in IP whitelist", player.getName().getString());
             return;
         }
 
         boolean isAccept;
         String countryCode = GeoLogin.CACHE.getIfPresent(ip);
-        if(countryCode != null) {
+        if (countryCode != null) {
             GeoLogin.LOGGER.info("Cache hit for IP: {}", ip);
-        }
-        else {
+        } else {
             try {
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
@@ -53,17 +52,26 @@ public class PlayerJoinMixin {
                 GeoLogin.LOGGER.debug("IP Location Data: {}", jsonResponse);
             } catch (Exception e) {
                 GeoLogin.LOGGER.error("Failed to get IP location data", e);
+
+                if(GeoLogin.CONFIG.allowJoinWhenGeoFail) {
+                    GeoLogin.LOGGER.info("Allowing player {} to join due to GeoIP failure", player.getName().getString());
+                    return;
+                } else {
+                    connection.disconnect(Text.translatable("multiplayer.disconnect.authservers_down"));
+                    GeoLogin.LOGGER.info("Player {} was kicked due to GeoIP failure", player.getName().getString());
+                    return;
+                }
             }
         }
 
-        if(GeoLogin.CONFIG.useWhitelist){
+        if (GeoLogin.CONFIG.useWhitelist) {
             isAccept = GeoLogin.CONFIG.countries.contains(countryCode);
-        }else {
+        } else {
             isAccept = !GeoLogin.CONFIG.countries.contains(countryCode);
         }
 
-        if(!isAccept) {
-            connection.disconnect(Text.translatable("multiplayer.disconnect.not_whitelisted"));
+        if (!isAccept) {
+            connection.disconnect(Text.translatable("multiplayer.disconnect.banned_ip.reason", "Not in allowed country"));
             GeoLogin.LOGGER.info("Player {} from {} was kicked by GeoLogin policy", player.getName().getString(), countryCode);
         }
     }

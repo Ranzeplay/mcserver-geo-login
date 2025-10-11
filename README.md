@@ -13,6 +13,12 @@ File path `config/geologin.json`
 - `ipWhitelist`: IP addresses that bypasses country check directly, formats:
   - `xxx.xxx.xxx.xxx`: Single IP address, allow `*` for wildcard
   - `xxx.xxx.xxx.xxx-yyy.yyy.yyy.yyy`: IP address segment
+- `allowJoinWhenGeoFail`: Allow players to join when the geo-location service fails.
+- `allowPrivateAddress`: Allow players with private IP addresses to join, range:
+  - 10.0.0.0 - 10.255.255.255
+  - 172.16.0.0 - 172.31.255.255
+  - 192.168.0.0 - 192.168.255.255
+- `allowLocalAddress`: Allow players with local IP addresses to join.
 
 ## Provider
 
