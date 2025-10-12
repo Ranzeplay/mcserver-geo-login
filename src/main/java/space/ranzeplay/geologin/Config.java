@@ -42,6 +42,7 @@ public class Config {
         var addressItems = ip.split("-");
 
         for (String ipEntry : this.ipWhitelist) {
+            continue_outer:
             // IP is a segment or single
             if (ipEntry.contains("-")) {
                 var segItems = ipEntry.split("-");
@@ -56,9 +57,12 @@ public class Config {
                     int endInt = Integer.parseInt(endAddrItems[i]);
 
                     if (addrItemInt < beginInt || addrItemInt > endInt) {
-                        return false;
+                        break continue_outer;
                     }
                 }
+
+                // All segments match
+                return true;
             } else {
                 var addr = ipEntry.split("-");
 
@@ -70,12 +74,15 @@ public class Config {
 
                     if (!addr[i].equals(addressItems[i])) {
                         // There is a mismatch in one segment
-                        return false;
+                        break continue_outer;
                     }
                 }
+
+                // All segments match
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 }
