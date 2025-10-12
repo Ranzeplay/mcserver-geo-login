@@ -3,6 +3,7 @@ package space.ranzeplay.geologin;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public class GeoLogin implements ModInitializer {
             try {
                 Files.createFile(configFile);
 
-                Files.write(configFile, new Gson().toJson(CONFIG).getBytes());
+                Files.write(configFile, new GsonBuilder().setPrettyPrinting().create().toJson(CONFIG).getBytes());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
